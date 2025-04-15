@@ -1,0 +1,39 @@
+// Web Scrapping
+!pip install requests
+!pip install html5lib
+!pip install bs4
+import requests
+from bs4 import BeautifulSoup
+
+query = "mobile"
+url = f"https://www.ebay.com/sch/i.html?_nkw={query}"
+
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+}
+
+response = requests.get(url, headers=headers)
+soup = BeautifulSoup(response.text, 'html.parser')
+
+items = soup.select(".s-item")
+
+for item in items:
+    title_tag = item.select_one(".s-item__title")
+    price_tag = item.select_one(".s-item__price")
+    link_tag = item.select_one(".s-item__link")
+    rating_tag = item.select_one(".b-starrating__star")
+    review_tag = item.select_one(".s-item__reviews span")
+
+    if title_tag and price_tag and link_tag:
+        title = title_tag.text
+        price = price_tag.text
+        link = link_tag['href']
+        rating = rating_tag['aria-label'] if rating_tag else "No rating"
+        reviews = review_tag.text if review_tag else "No reviews"
+
+        print(f"Title: {title}")
+        print(f"Price: {price}")
+        print(f"Link: {link}")
+        print(f"Rating: {rating}")
+        print(f"Reviews: {reviews}")
+        print("-" * 50)
